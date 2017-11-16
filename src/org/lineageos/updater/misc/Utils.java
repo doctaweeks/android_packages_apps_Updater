@@ -113,6 +113,11 @@ public class Utils {
 
     public static List<UpdateInfo> parseJson(File file, boolean compatibleOnly)
             throws IOException, JSONException {
+        return parseJson(file, compatibleOnly, false);
+    }
+
+    public static List<UpdateInfo> parseJson(File file, boolean compatibleOnly, boolean hideCurrent)
+            throws IOException, JSONException {
         List<UpdateInfo> updates = new ArrayList<>();
 
         String json = "";
@@ -131,7 +136,12 @@ public class Utils {
             try {
                 UpdateInfo update = parseJsonUpdate(updatesList.getJSONObject(i));
                 if (!compatibleOnly || isCompatible(update)) {
-                    updates.add(update);
+                    if (hideCurrent && update.getDownloadId().equalsIgnoreCase(
+                            BuildInfoUtils.getBuildIncrementalVersion())) {
+                        Log.d(TAG, "Ignoring current build " + update.getName());
+                    } else {
+                        updates.add(update);
+                    }
                 } else {
                     Log.d(TAG, "Ignoring incompatible update " + update.getName());
                 }

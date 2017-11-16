@@ -261,7 +261,10 @@ public class UpdatesActivity extends UpdatesListActivity {
         Controller controller = mUpdaterService.getUpdaterController();
         boolean newUpdates = false;
 
-        List<UpdateInfo> updates = Utils.parseJson(jsonFile, true);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean hideCurrent = preferences.getBoolean(Constants.PREF_HIDE_CURRENT_VERSION, true);
+
+        List<UpdateInfo> updates = Utils.parseJson(jsonFile, true, hideCurrent);
 
         List<String> importedNotAvailableOnline = LegacySupport.importDownloads(this, updates);
 
